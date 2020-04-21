@@ -13,7 +13,7 @@
 </nav>
 <section class="content">
   <header>
-    {% block header %}
+    {% block header %}   {% endblock %}
     <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,12 +43,7 @@
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
 <!--===============================================================================================-->
 </head>
-<style>
-	body {
-	  background-image: url('deprem.jpg');
-	  background-repeat: no-repeat;
-	}
-	</style>
+
 
 <body >
 	
@@ -57,22 +52,20 @@
 		<div class="container-login100">
 			<div class="wrap-login100 p-t-85 p-b-20">
 				<form class="login100-form validate-form">
-					<span class="login100-form-avatar">
-						<img src="afad.png" alt="AVATAR">
-					</span>
+					
 
 					<div class="wrap-input100 validate-input m-t-85 m-b-35" data-validate = "Kullanıcı Adı">
-						<input class="input100" type="text" name="username">
+						<input class="input100" type="text" name="username" id="username" required>
 						<span class="focus-input100" data-placeholder="Kullanıcı Adı"></span>
 					</div>
 
 					<div class="wrap-input100 validate-input m-b-50" data-validate="Şifre">
-						<input class="input100" type="password" name="pass">
+						<input class="input100" type="password" name="pass" id="password" required>
 						<span class="focus-input100" data-placeholder="Şifre"></span>
 					</div>
 
 					<div class="container-login100-form-btn">
-						<button class="login100-form-btn">
+						<button class="login100-form-btn" href="{{ url_for('auth.index') }}" >
 							Giriş
 						</button>
 					</div>
@@ -83,7 +76,7 @@
 								Unuttun mu ?
 							</span>
 
-							<a href="#" class="txt2">
+							<a href="{{ url_for('auth.forgot') }}" class="txt2">
 								Kullanıcı Adı/Şifre 
 							</a>
 						</li>
@@ -93,7 +86,7 @@
 								Hesabın yok mu ? 
 							</span>
 
-							<a href="#" class="txt2">
+							 <a href="{{ url_for('auth.register') }}" >
 								Kayıt Ol
 							</a>
 						</li>
@@ -125,7 +118,7 @@
 
 </body>
 </html>
-    {% endblock %}
+ 
   </header>
   {% for message in get_flashed_messages() %}
     <div class="flash">{{ message }}</div>

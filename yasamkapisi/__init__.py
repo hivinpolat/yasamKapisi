@@ -6,7 +6,7 @@ Created on Wed Apr  8 14:43:34 2020
 """
 import os
 
-from flask import Flask
+from flask import Flask,redirect,url_for,escape,render_template
 
 
 def create_app(test_config=None):
@@ -32,12 +32,16 @@ def create_app(test_config=None):
 
     # a simple page that says hello
     @app.route('/')
-    def hello():
-        return 'Hello, World!'
+    def login():
+        return redirect(url_for('auth.login'))
+   
+   
+    
     from . import db#database
     db.init_app(app)
     
-    from . import auth#blueprint
+    from . import auth
     app.register_blueprint(auth.bp)
+  
 
     return app
