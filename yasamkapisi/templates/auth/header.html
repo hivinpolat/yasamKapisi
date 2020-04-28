@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Yaşam Kapısı</title>
+	
+    <!-- Bootstrap -->
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="{{ url_for('static', filename='fonts/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="{{ url_for('static', filename='css/nprogress.css') }}" rel="stylesheet">
+    <!-- Animate.css -->
+    <link href="{{ url_for('static', filename='css/animate.min.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/daterangepicker.css') }}" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+  </head>
+
+  <body class="login">
+  <br>
+  <div class="container" style="max-height:50px; width:70%;">
+  {% include "includes/messages.html" %}
+    {% block body %}
+   
+    {% endblock %}
+</div>
+  
+  {% block login %}
+
+  
+  {% endblock login %}
+
+  <script src="{{ url_for('static', filename='vendor/bootstrap/js/daterangepicker.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+  <!-- bootstrap-daterangepicker -->
+  <script>
+    $(document).ready(function() {
+      $('#birthday').daterangepicker({
+        singleDatePicker: true,
+        calender_style: "picker_4"
+      }, function(start, end, label) {
+        console.log(start.toISOString(), end.toISOString(), label);
+      });
+    });
+  </script>
+  <!-- /bootstrap-daterangepicker -->
+
+  </body>
+</html>

@@ -1,127 +1,45 @@
-<!doctype html>
-<title>{% block title %}{% endblock %} GİRİŞ EKRANI</title>
+{% extends "auth/header.html" %}
 
-<nav>
- 
-  <ul>
-    {% if g.user %}
-      <li><span>{{ g.user['username'] }}</span>
-      <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
-    {% else %}
-    {% endif %}
-  </ul>
-</nav>
-<section class="content">
-  <header>
-    {% block header %}   {% endblock %}
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-	<title>Giriş Ekranı</title>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-<!--===============================================================================================-->	
-	<link rel="icon" type="image/png" href="{{ url_for('static', filename='images/icons/favicon.ico') }}"/>
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='fonts/iconic/css/material-design-iconic-font.min.css') }}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/animate/animate.css') }}">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/css-hamburgers/hamburgers.min.css') }}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/animsition/css/animsition.min.css') }}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/select2/select2.min.css') }}">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/daterangepicker/daterangepicker.css') }}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/util.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
-<!--===============================================================================================-->
-</head>
+{% block login %}
+<div>
+      <a class="hiddenanchor" id="signup"></a>
+      <a class="hiddenanchor" id="signin"></a>
 
+      <div class="login_wrapper">
+        <div class="animate form login_form">
+          <section class="login_content">
+            <form method="post">
+              <h1>Giriş Ekranı</h1>
+              <div>
+                <input type="text" name="username" class="form-control" placeholder="Kullanıcı Adı" required="" />
+              </div>
+              <div>
+                <input type="password" name="password" class="form-control" placeholder="Parola" required="" />
+              </div>
+              <div>
+                <button type="submit" class="btn btn-default submit" href="index.html">Giriş Yap</button>
+                <a class="reset_pass" href="{{ url_for('auth.forgot') }}">Şifreni mi unuttun?</a>
+              </div>
 
-<body >
-	
-	
-	<div class="limiter">
-		<div class="container-login100">
-			<div class="wrap-login100 p-t-85 p-b-20">
-				<form class="login100-form validate-form">
-					
+              <div class="clearfix"></div>
 
-					<div class="wrap-input100 validate-input m-t-85 m-b-35" data-validate = "Kullanıcı Adı">
-						<input class="input100" type="text" name="username" id="username" required>
-						<span class="focus-input100" data-placeholder="Kullanıcı Adı"></span>
-					</div>
+              <div class="separator">
+                <p class="change_link">Sitede yeni misin?
+                  <a href="{{ url_for('auth.register') }}" class="to_register"> Hesap Oluştur </a>
+                </p>
 
-					<div class="wrap-input100 validate-input m-b-50" data-validate="Şifre">
-						<input class="input100" type="password" name="pass" id="password" required>
-						<span class="focus-input100" data-placeholder="Şifre"></span>
-					</div>
+                <div class="clearfix"></div>
+                <br />
 
-					<div class="container-login100-form-btn">
-						<button class="login100-form-btn" href="{{ url_for('auth.index') }}" >
-							Giriş
-						</button>
-					</div>
+                <div>
+                  <h1><i class="fa fa-home"></i> Yaşam Kapısı!</h1>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
 
-					<ul class="login-more p-t-190">
-						<li class="m-b-8">
-							<span class="txt1">
-								Unuttun mu ?
-							</span>
-
-							<a href="{{ url_for('auth.forgot') }}" class="txt2">
-								Kullanıcı Adı/Şifre 
-							</a>
-						</li>
-
-						<li>
-							<span class="txt1">
-								Hesabın yok mu ? 
-							</span>
-
-							 <a href="{{ url_for('auth.register') }}" >
-								Kayıt Ol
-							</a>
-						</li>
-					</ul>
-				</form>
-			</div>
-		</div>
-	</div>
-	
-
-	<div id="dropDownSelect1"></div>
-	
-<!--===============================================================================================-->
-	<script src="{{ url_for('static', filename='vendor/jquery/jquery-3.2.1.min.js') }}"></script>
-<!--===============================================================================================-->
-	<script src="{{ url_for('static', filename='vendor/animsition/js/animsition.min.js') }}"></script>
-<!--===============================================================================================-->
-	<script src="{{ url_for('static', filename='vendor/bootstrap/js/popper.js') }}"></script>
-	<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
-<!--===============================================================================================-->
-	<script src="{{ url_for('static', filename='vendor/select2/select2.min.js') }}"></script>
-<!--===============================================================================================-->
-	<script src="{{ url_for('static', filename='vendor/daterangepicker/moment.min.js') }}"></script>
-	<script src="{{ url_for('static', filename='vendor/daterangepicker/daterangepicker.js') }}"></script>
-<!--===============================================================================================-->
-	<script src="{{ url_for('static', filename='vendor/countdowntime/countdowntime.js') }}"></script>
-<!--===============================================================================================-->
-	<script src="{{ url_for('static', filename='js/main.js') }}"></script>
-
-</body>
-</html>
- 
-  </header>
-  {% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
-  {% endfor %}
-  {% block content %}{% endblock %}
-</section>
+        
+      </div>
+    </div>	
+{% endblock login %}

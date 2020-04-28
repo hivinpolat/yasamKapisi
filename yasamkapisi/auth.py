@@ -5,56 +5,63 @@ from flask import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from yasamkapisi.db import get_db
+#Mail gönderme modülleri
+import smtplib #mail gönderme servisi
+from email.mime.text import MIMEText # mesaj içeriği üretmek için kullanılır.
+from email.mime.multipart import MIMEMultipart
+from datetime import datetime
+
+#İhtiyacımız olan model çağrıldı.
+from yasamkapisi.models import User
+
+#Mail bilgileri
+email = "ktuyapayzekaklubu@gmail.com"
+parola = "yasamkapisi123"
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 """"""""""""""""""
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
-        username = request.form['username']
+        name = request.form['name']
         surname=request.form['surname']
-        password = request.form['password']
+        phone = request.form['phone']
+        mail=request.form['mail']
+        workspace=request.form['workspace']
+        gender=request.form['gender']
+        birthday=request.form['birthday']
         tc=request.form['tc']
-        birim=request.form['birim']
-        dogumtarihi=request.form['dogumtarihi']
-        telefon=request.form['telefon']
-        eposta=request.form['eposta']
-        db = get_db()
+        username=request.form['username']
+        password=request.form['password']
+        repeatpassword=request.form['repeatpassword']
+        
         error = None
 
-        if not username:
-            error = 'Username is required.'
-        elif not password:
-            error = 'Password is required.'
-        elif not surname:
-            error = 'Surname is required.'
-        elif not tc:
-            error = 'tc is required.'
-        elif not birim:
-            error = 'birim is required.'
-        elif not dogumtarihi:
-            error = 'Dogum tarihi is required.'
-        elif not telefon:
-            error = 'Telefon is required.'
-        elif not eposta:
-            error = 'E posta is required.'
-        elif db.execute(
-            'SELECT id FROM user WHERE username = ?', (username,)
-        ).fetchone() is not None:
-            error = 'User {} is already registered.'.format(username)
-
-        if error is None:
-            db.execute(
-                'INSERT INTO user (username, password) VALUES (?, ?)',
-                (username, generate_password_hash(password))
-            )
-            db.commit()
+        if password != repeatpassword:
+            error = "Şifre eşleşmiyor. Tekrar deneyin..."
+        elif not User.objects(username=username).first() == None:
+            error = "Bu kullanıcı adı bulunmaktadır. Tekrar deneyin..."
+        elif not User.objects(mail=mail).first() == None:
+            error = "Bu mail adresine ait kayıtlı kullanıcı bulunmaktadır. Tekrar deneyin..."
+        else:#Mongodb'ye kullanıcı kaydı yapılıyor.
+            user = User(
+                name = name,
+                surname = surname,
+                phone = phone,
+                mail = mail,
+                workspace = workspace,
+                gender = gender,
+                birthday = birthday,
+                tc = tc,
+                username = username,
+                password = generate_password_hash(password),
+            ).save()
+        
             session.clear()
+            flash("Kayıt başarılı","success")
             return redirect(url_for('auth.login'))
 
-        flash(error)
-
+        flash(error,"danger")
     return render_template('auth/register.html')
 """"""""""""""""""""""""""""""""""""
 
@@ -63,26 +70,24 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password=request.form['password']
-        db = get_db()
+        
         error = None
-        user = db.execute(
-            'SELECT * FROM user WHERE password = ?', (password,)
-        ).fetchone()
+        user = User.objects(username=username).first()
 
         if user is None:
-            error = 'Incorrect username.'
-            return  redirect(url_for('auth.register'))
-        elif not check_password_hash(user['password'], password):
-            error = 'Incorrect password.'
-            return redirect(url_for('auth.forgot'))
+            error = 'Böyle bir kullanıcı bulunmamaktadır. Lütfen tekrar deneyin...'
+        elif not check_password_hash(user.password, password):
+            error = 'Şifre hatalı. Lütfen tekrar deneyin...'
 
         if error is None:
            session.clear()
-           session['username'] = user['username']
-           return redirect(url_for('auth.index'))
-        flash(error)
-    return render_template('auth/login.html')
+           session["logged_in"] = True
+           session['username'] = username
+           return session['username']
 
+        flash(error,"danger")
+    return render_template('auth/login.html')
+"""
 @bp.route('/index', methods=('GET', 'POST'))
 def index():
    
@@ -90,51 +95,65 @@ def index():
        
 
 
-    return render_template('auth/index.html')
+    return render_template('auth/index.html')"""
 """"""""""""
+
 @bp.route('/forgot', methods=('GET', 'POST'))
 def forgot():
     if request.method == 'POST':
-        eposta = request.form['eposta']
-        db = get_db()
+        username = request.form['username']
+
         error = None
-        user = db.execute(
-            'SELECT * FROM user WHERE eposta = ?', (eposta,)
-        ).fetchone()
+        user = User.objects(username=username).first()
 
         if user is None:
-            error = 'Incorrect eposta.'
+            error = 'Böyle bir kullanıcı bulunmamaktadır. Lütfen tekrar deneyin...'
+            flash(error,"danger")
+            return redirect(url_for('auth.forgot'))
+        else:
+            try:
+                tarih = datetime.now()
+                mesajIcergi = """
+                        Merhaba {username};
+                        Şifrenizi {tarih} tarihinde mailinize gönderilmesini talep etmişsiniz.
 
-        if error is None:
-            session.clear()
-            session['username'] = user['username']
-            return  redirect(url_for('auth.login'))
-
-        flash(error)
+                        Şifreniz : {sifre}
+                """
+                organizeMesage = mesajIcergi.format(username=username,tarih=tarih.strftime("%d/%m/%Y - %H:%M:%S"),sifre=user.password)
+                #mesaj içeriği oluşturma
+                mesaj = MIMEMultipart()
+                mesaj["Subject"] = "Şifre Gönderimi"
+                mesaj["From"] = email
+                mesaj["To"] = user.mail
+                mesaj.attach(MIMEText(organizeMesage,"plain"))
+                
+                #mail gönderme işlemleri
+                mailServisi = smtplib.SMTP("smtp.gmail.com",587)
+                mailServisi.ehlo()
+                mailServisi.starttls()
+                mailServisi.login(email,parola)
+                mailServisi.sendmail(email,user.mail,mesaj.as_string())
+                mailServisi.quit()
+                flash("Mailiniz başarıyla gönderildi...","success")
+                return redirect(url_for("auth.login"))
+            except:
+                flash("Mail gönderilirken bir hata oluştu...","danger")
+                return redirect(url_for("auth.forgot"))
 
     return render_template('auth/forgot.html')
-@bp.before_app_request
-def load_logged_in_user():
-    username = session.get('username')
-
-    if username is None:
-        g.user = None
-    else:
-        g.user = get_db().execute(
-            'SELECT * FROM user WHERE username = ?', (username,)
-        ).fetchone()
         
 @bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('index'))
+    return redirect(url_for('auth.login')) 
 
-def login_required(view):
-    @functools.wraps(view)
-    def wrapped_view(**kwargs):
-        if g.user is None:
-            return redirect(url_for('auth.login'))
-
-        return view(**kwargs)
-
-    return wrapped_view 
+#session kontrolünü yapan fonksiyon
+def login_required(f):
+    @functools.wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "logged_in" in session:
+            return f(*args, **kwargs)
+        else:
+            flash("Bu sayfayı görüntülemek için lütfen giriş yapın...","danger")
+            return redirect(url_for("auth.login"))
+    return decorated_function
