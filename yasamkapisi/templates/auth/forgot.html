@@ -1,14 +1,39 @@
-<!doctype html>
-{% block header %}
-  <h1>{% block title %}Register{% endblock %}</h1>
-{% endblock %}
+{% extends "auth/header.html" %}
 
-{% block content %}
-  <form method="post">
-    <label for="username">Username</label>
-    <input name="username" id="username" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <input type="submit" value="Register">
-  </form>
-{% endblock %}
+{% block login %}
+<div>
+      <a class="hiddenanchor" id="signup"></a>
+      <a class="hiddenanchor" id="signin"></a>
+
+      <div class="login_wrapper">
+        <div class="animate form login_form">
+          <section class="login_content">
+            <form method="post">
+              <h1 style="font-size:30px">Şifremi Unuttum</h1>
+              <div>
+                <input type="text" name="username" class="form-control" placeholder="Kullanıcı Adı" required="" />
+              </div>
+              <div>
+                <button type="submit" class="btn btn-default submit" href="index.html">Gönder</button>
+                <a class="reset_pass" href="{{ url_for('auth.login') }}">Giriş ekranına mı gitmek istiyorsun?</a>
+              </div>
+
+              <div class="clearfix"></div>
+
+              <div class="separator">
+
+                <div class="clearfix"></div>
+                <br />
+
+                <div>
+                  <h1><i class="fa fa-home"></i> Yaşam Kapısı!</h1>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+
+        
+      </div>
+    </div>	
+{% endblock login %}
